@@ -2,6 +2,7 @@ package com.og.conferencedemo.controllers;
 
 import com.og.conferencedemo.models.Session;
 import com.og.conferencedemo.repositories.SessionRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,5 +33,12 @@ public class SessionsController {
     @RequestMapping(value = "{id}", method = RequestMethod.DELETE)
     public void delete(@PathVariable Long id) {
         sessionRepository.deleteById(id);
+    }
+
+    @RequestMapping(value = "{id}", method = RequestMethod.POST)
+    public Session update(@PathVariable Long id, @RequestBody final Session session) {
+        Session existingSession = sessionRepository.getReferenceById(id);
+        BeanUtils.copyProperties(session, existingSession, "session_id");
+        return sessionRepository.saveAndFlush(existingSession);
     }
 }
